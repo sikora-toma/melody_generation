@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://github.com/MarjanSikora/MelodyDiffusion">
-    <img src="https://via.placeholder.com/72" alt="Musical Note" width=72 height=72>
+  <a href="https://github.com/sikora-toma/melody_generation">
+    <img src="https://www.primorskihrvat.hr/wp-content/uploads/2024/01/sopile.jpg" alt="Sopile" width=72 height=72>
   </a>
   <h3 align="center">Traditional melody generation</h3>
   <p align="center">
