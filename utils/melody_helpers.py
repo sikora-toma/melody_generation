@@ -2,6 +2,52 @@ import numpy as np
 from scipy.io.wavfile import write
 import csv
 import argparse
+from copy import deepcopy
+
+keys = {
+    'C': 40,
+    'C#': 41,
+    'Db': 41,
+    'D': 42,
+    'D#': 43,
+    'Eb': 43,
+    'E': 44,
+    'F': 45,
+    'F#': 46,
+    'Gb': 46,
+    'G': 47,
+    'G#': 48,
+    'Ab': 48,
+    'A': 49,
+    'A#': 50,
+    'Bb': 50,
+    'B': 51
+}
+
+class Melody:
+    def __init__(self):
+        self.key = None
+        self.notes = None
+        self.durations = None
+        self.beat_length = 1920 # TODO update based on midi
+        return
+    
+    def __init__(self, key, notes, durations):
+        self.key = key
+        self.notes = notes
+        self.durations = durations
+        self.beat_length = 1920 # TODO update based on midi
+        return
+    
+    # TODO update with duration
+    def get_raw_melody(self, normalize_beat=False):
+        if normalize_beat:
+            melody = np.array(deepcopy(self.notes) + self.key)
+        else:
+            melody = np.array([elem for elem, count in zip(self.notes, self.durations) for _ in range(count)])
+        return melody
+    def __str__(self):
+        return f"Key: {self.key}\nNotes: {self.notes}\nDurations: {self.durations}"
 
 # Constants for generating the tones
 SAMPLE_RATE = 44100  # samples per second (standard for CD quality)
