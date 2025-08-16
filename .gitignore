@@ -1,3 +1,9 @@
 .venv/*
 .vscode/*
-results/*.pt
+models/*.pt
+models/*.png
+*.mid
+res/*.xml
+*.pyc
+res/dataset/*
+res/config/*
