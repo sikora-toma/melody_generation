@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from scipy.io.wavfile import write
 import csv
 import argparse
@@ -64,10 +65,11 @@ def piano_key_to_frequency(key_number):
     # Middle A (A4) is the 49th key and has a frequency of 440 Hz
     # The formula is f(n) = 440 * 2^((n - 49) / 12), where n is the key number
     # TODO key_number is sometimes float, should be fine, but in theory is supposed to be int
-    if 1 <= key_number <= 88:
-        return 440 * 2 ** ((key_number - 49) / 12)
-    else:
-        raise ValueError("Key number must be between 1 and 88.")
+    if key_number<1:
+        key_number = 1
+    elif key_number>88:
+        key_number = 88
+    return 440 * 2 ** ((key_number - 49) / 12)
 
 # Define a function to generate a sine wave for a note
 def generate_sine_wave(frequency, duration, sample_rate=SAMPLE_RATE):
@@ -135,7 +137,7 @@ def write_melody_to_wav(melody, output_file):
 
     # Generate each note and append it to the full audio
     for note in melody:
-        wave = generate_sine_wave(piano_key_to_frequency(note), DURATION)
+        wave = generate_sine_wave(piano_key_to_frequency(torch.round(note)), DURATION)
         full_audio = np.concatenate((full_audio, wave))
 
     # Convert the numpy array to 16-bit PCM (pydub requires this format)
@@ -145,6 +147,25 @@ def write_melody_to_wav(melody, output_file):
     write(output_file, SAMPLE_RATE, full_audio)
 
     print(f"Melody saved to {output_file}")
+
+def write_tensor_to_wav(tensor, output_file):
+    # Create a numpy array to hold the full audio data
+    full_audio = np.array([])
+
+    # Generate each note and append it to the full audio
+    for note in tensor:
+        pitch, duration = note[0], note[1]
+        wave = generate_sine_wave(piano_key_to_frequency(torch.round(pitch)), duration)
+        full_audio = np.concatenate((full_audio, wave))
+
+    # Convert the numpy array to 16-bit PCM (pydub requires this format)
+    full_audio = np.int16(full_audio * 32767)  # Scale to 16-bit PCM range
+
+    # Write to a .wav file using scipy's write function
+    write(output_file, SAMPLE_RATE, full_audio)
+
+    print(f"Melody saved to {output_file}")
+
 
 
 
