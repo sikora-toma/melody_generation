@@ -3,7 +3,6 @@ from torch.utils.data import Dataset, DataLoader
 import os
 
 from utils.midi_utils import read_midi_file
-from utils.melody_helpers import min_max_normalize
 
 
 MIN_KEY, MAX_KEY = 1, 88
@@ -25,6 +24,11 @@ class MelodyDataset(Dataset):
     def normalize(self, tensor):
         tensor[0] = (tensor[0] - MIN_KEY)/(MAX_KEY - MIN_KEY)
         tensor[1] = (tensor[1] - MEAN_DURATION)/STD_DURATION
+        return tensor
+
+    def rescale(self, tensor):
+        tensor[0] = tensor[0] * (MAX_KEY - MIN_KEY) + MIN_KEY
+        tensor[1] = tensor[1] * STD_DURATION + MEAN_DURATION
         return tensor
 
 
