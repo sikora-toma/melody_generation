@@ -1,10 +1,11 @@
 import numpy as np
 import torch
+from torchvision import transforms
 import yaml
 
 from denoising_diffusion_pytorch import Unet1D, GaussianDiffusion1D, Trainer1D, Dataset1D
 from utils.melody_helpers import generate_maj_scale, write_melody_to_wav
-from utils.melody_dataset import MelodyDataset
+from utils.melody_dataset import MelodyDataset, Modulate, TimeScale
 
 
 def z_score_normalize(tensor):
@@ -43,7 +44,9 @@ with open('res/config/medjimurje.yaml', 'r') as file:
     config = yaml.safe_load(file)
     dataset_folder = config['filepath']
 
-dataset = MelodyDataset(dataset_folder)
+dataset = MelodyDataset(dataset_folder,
+                        tranform=transforms.Compose([Modulate(),
+                                                    TimeScale(std=0.01)]))
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
