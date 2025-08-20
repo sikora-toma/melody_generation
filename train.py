@@ -4,7 +4,7 @@ from torchvision import transforms
 import yaml
 
 from denoising_diffusion_pytorch import Unet1D, GaussianDiffusion1D, Trainer1D, Dataset1D
-from utils.melody_helpers import generate_maj_scale, write_melody_to_wav
+from utils.melody_helpers import generate_maj_scale, write_tensor_to_wav
 from utils.melody_dataset import MelodyDataset, Modulate, TimeScale
 
 
@@ -56,7 +56,7 @@ trainer = Trainer1D(
     dataset = dataset,
     train_batch_size = 4,
     train_lr = 8e-5,
-    train_num_steps = 600,         # total training steps
+    train_num_steps = 60,         # total training steps
     gradient_accumulate_every = 2,    # gradient accumulation steps
     ema_decay = 0.995,                # exponential moving average decay
     amp = True,                       # turn on mixed precision
@@ -68,8 +68,9 @@ trainer.train()
 sampled_seq = diffusion.sample(batch_size = 4)
 sampled_seq.shape # (4, 32, 128)
 print(f"Sampled seq raw: {sampled_seq}")
-melodies = rescale_melody(torch.squeeze(sampled_seq).detach().cpu(), MIN_KEY, MAX_KEY)
+# melodies = rescale_melody(torch.squeeze(sampled_seq).detach().cpu(), MIN_KEY, MAX_KEY)
+melodies = dataset.rescale(sample=sampled_seq)
 print(f"Melodies: {melodies}")
 
 for i in range(len(torch.squeeze(melodies))):
-    write_melody_to_wav(melody=melodies[i], output_file=f"output_melody{i}.wav")
+    write_tensor_to_wav(tensor=melodies[i], output_file=f"output_melody{i}.wav")

@@ -154,7 +154,7 @@ def write_tensor_to_wav(tensor, output_file):
 
     # Generate each note and append it to the full audio
     for note in tensor:
-        pitch, duration = note[0], note[1]
+        pitch, duration = note[0].cpu(), note[1].cpu()
         wave = generate_sine_wave(piano_key_to_frequency(torch.round(pitch)), duration)
         full_audio = np.concatenate((full_audio, wave))
 
